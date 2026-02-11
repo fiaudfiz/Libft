@@ -28,3 +28,39 @@ L'arborescence est organisée par thématiques pour une meilleure maintenabilit�
 * **`get_next_line`** : Fonction permettant de lire une ligne à la fois depuis un descripteur de fichier.
 
 ---
+
+## 🛠️ Mise en place
+### 1. Installation
+
+Cloner le dépôt dans ton projet :
+Bash
+
+git clone git@github.com:fiaudfiz/libft.git
+
+### 2. Compilation
+
+Générer l'archive libft.a à la racine :
+Bash
+
+cd libft && make
+
+## 3. Intégration dans un autre projet
+
+Pour compiler ton propre code avec cette bibliothèque, utilise les flags suivants :
+Bash
+
+# Compilation
+cc my_project.c -L. -lft -I./includes
+
+    Note : -L. indique où chercher la lib, -lft lie libft.a, et -I./includes permet de trouver le header sans taper le chemin complet.
+
+🧪 Tests & Fiabilité
+
+Le code est régulièrement passé au crible pour garantir une stabilité maximale :
+
+    Memory Leaks : Zéro fuite détectée avec Valgrind.
+
+    Norminette : 100% conforme aux règles de l'école 42.
+
+    Unit Tests : Testé avec Francinette et des testeurs maison pour les cas limites (segmentation faults sur pointeurs NULL, buffers vides, etc.).
+
