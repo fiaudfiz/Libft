@@ -6,11 +6,35 @@
 /*   By: miouali <miouali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 10:35:45 by miouali           #+#    #+#             */
-/*   Updated: 2026/02/04 15:17:32 by miouali          ###   ########.fr       */
+/*   Updated: 2026/02/13 09:47:15 by miouali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+
+int	ft_check_base(char *base)
+{
+	int	i;
+	int	j;
+
+	if (ft_strlen(base) <= 1)
+		return (1);
+	i = 0;
+	while (base[i])
+	{
+		if (base[i] == '+' || base[i] == '-')
+			return (1);
+		j = i + 1;
+		while (base[j])
+		{
+			if (base[i] == base[j])
+				return (1);
+			j++;
+		}
+		i++;
+	}
+	return (0);
+}
 
 void	ft_reverse(char *str)
 {
