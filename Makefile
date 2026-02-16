@@ -6,7 +6,7 @@
 #    By: miouali <miouali@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/12 12:56:33 by miouali           #+#    #+#              #
-#    Updated: 2026/02/04 14:35:08 by miouali          ###   ########.fr        #
+#    Updated: 2026/02/16 20:39:20 by miouali          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -68,7 +68,7 @@ ALL_SRCS = $(addprefix $(SRCS_DIR)$(IS_DIR), $(SRCS_IS)) \
 			$(addprefix $(SRCS_DIR)$(LST_DIR), $(SRCS_LST)) \
 			$(addprefix $(SRCS_DIR)$(PRINTF_DIR), $(SRCS_PRINTF)) \
 			$(addprefix $(SRCS_DIR)$(GNL_DIR), $(SRCS_GNL)) \
-			$(addprefix $(SRCS_DIR)$(MATHS_DIR), $(SRCS_MATHS)) \
+			$(addprefix $(SRCS_DIR)$(MATHS_DIR), $(SRCS_MATHS))
 
 
 OBJS = $(patsubst $(SRCS_DIR)%.c, $(OBJS_DIR)%.o, $(ALL_SRCS))
@@ -84,6 +84,7 @@ header:
 	@echo "$(YELLOW) Démarrage de la compilation de la Libft...$(RESET)"
 
 start_timer:
+	@rm -rf $(ERR_LOG)
 	$(eval START_TIME := $(shell date +%s))
 
 $(NAME): $(OBJS)
@@ -117,7 +118,7 @@ $(OBJS_DIR)%.o: $(SRCS_DIR)%.c $(HEADER)
 	@printf "\r$(CYAN)🛠️  Compiling Libft... [%-20s] %d%%" \
 		"$(shell printf '#%.0s' $$(seq 1 $$(($(PERCENT) / 5))))" $(PERCENT)
 	@$(CC) $(CFLAGS) -c $< -o $@ 2> .temp_err || \
-		(printf "\n$(PURPLE)❌ Erreur dans $< :$(RESET)\n" && cat .temp_err >> $(ERR_LOG) && cat .temp_err && rm -f .temp_err)
+		(printf "\n$(PURPLE)❌ Erreur dans $< :$(RESET)\n" && cat .temp_err >> $(ERR_LOG) && cat .temp_err && rm -f .temp_err && exit 1)
 		
 
 end_timer:
