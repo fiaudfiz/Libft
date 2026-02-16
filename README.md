@@ -4,38 +4,38 @@ The initial project of School 42, a mini-library in C, which can serve as a basi
 
 ---
 
-##  Structure du projet
+##  Project structure
 
-L'arborescence est organisée par thématiques pour une meilleure maintenabilité :
+The tree structure is organized by theme for better maintainability:
 
-* **`srcs/is/`** : Tests de caractères (isdigit, isalpha, etc.).
-* **`srcs/mem/`** : Manipulation de mémoire (`ft_realloc`, `ft_free_str_tab`, etc.).
-* **`srcs/str/`** : Manipulation de chaînes de caractères complexes (`ft_split`, `ft_strjoin_free`).
+* **`srcs/is/`** : ASCII tests (isdigit, isalpha, etc.).
+* **`srcs/mem/`** : Memory manipulation (`ft_realloc`, `ft_free_str_tab`, etc.).
+* **`srcs/str/`** : String manipulation (`ft_split`, `ft_strjoin_free`).
 * **`srcs/to/`** : Conversions (atof, atoi, itoa, etc.).
-* **`srcs/maths/`** : Fonctions mathématiques (`ft_sqrt`, `ft_pow`).
-* **`srcs/lst/`** : Gestion complète de listes chaînées.
-* **`srcs/put/`** : Fonctions d'affichage.
-* **`srcs/printf/`** : Fonction printf.
-* **`srcs/get_next_line`** : lire un fichier ligne par ligne (Projet 42).
+* **`srcs/maths/`** : Mathematical functions (`ft_sqrt`, `ft_pow`).
+* **`srcs/lst/`** : Complete management of linked lists.
+* **`srcs/put/`** : Display functions.
+* **`srcs/printf/`** : Printf function.
+* **`srcs/get_next_line`** : Read a file line by line (Project 42).
 ---
 
-## Mise en place
+## Set up
 ### 1. Installation
 
-Cloner le dépôt dans ton projet :
+Clone the repository into your project:
+
 ```bash
 git clone git@github.com:fiaudfiz/libft.git
 ```
 ### 2. Compilation
 
-Générer l'archive libft.a à la racine :
+Generate the libft.a archive in the root directory:
 
 ```bash
 cd libft && make
 ```
-### 3. Intégration dans un autre projet
-
-Pour compiler ton propre code avec cette bibliothèque, utilise les flags suivants :
+### 3. Integration into another project
+To compile your own code with this library, use the following flags:
 
 ```bash
 cc my_project.c -L. -lft -I./includes
