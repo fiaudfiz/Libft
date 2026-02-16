@@ -1,7 +1,6 @@
 # Libft - @42
 
-Le projet initial de l'école 42, une mini bibliotheque en C, qui peut servir de base pour divers projets.
-Ce projet a ete realise dans le cadre de l'ecole 42, et contient toutes fonctions du suejt, et elle a ete amelioree par la suite.
+The initial project of School 42, a mini-library in C, which can serve as a basis for various projects. This project was created within the framework of School 42, and contains all the functions of the subject, and it has been improved subsequently.
 
 ---
 
