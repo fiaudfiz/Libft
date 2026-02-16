@@ -31,7 +31,7 @@ static char	*read_to_stash(int fd, char *stash)
 		if (bytes_read == 0)
 			break ;
 		buffer[bytes_read] = '\0';
-		tmp = ft_strjoin(stash, buffer);
+		tmp = ft_strjoin_gnl(stash, buffer);
 		free(stash);
 		stash = tmp;
 		if (!stash)

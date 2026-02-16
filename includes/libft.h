@@ -57,10 +57,8 @@ extern const t_alias	g_format_tab[];
 
 //gnl
 
-size_t		ft_strlen(const char *src);
 char		*get_next_line(int fd);
-char		*ft_substr(char const *s, unsigned int start, size_t len);
-char		*ft_strjoin(char const *s1, char const *s2);
+char		*ft_strjoin_gnl(char const *s1, char const *s2);
 int			ft_strchr_gnl(char *s, int c);
 
 // IS

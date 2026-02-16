@@ -30,48 +30,6 @@ int	ft_strchr_gnl(char *s, int c)
 	return (0);
 }
 
-size_t	ft_strlen(const char *src)
-{
-	size_t	i;
-
-	i = 0;
-	if (!src)
-		return (0);
-	while (src[i])
-	{
-		i++;
-	}
-	return (i);
-}
-
-char	*ft_substr(char const *s, unsigned int start, size_t len)
-{
-	size_t	i;
-	size_t	lens;
-	char	*dest;
-
-	lens = 0;
-	if (!s)
-		return (NULL);
-	while (s[lens])
-		lens++;
-	i = 0;
-	if (start >= lens)
-		len = 0;
-	if (len > lens - start)
-		len = lens - start;
-	dest = malloc(len + 1);
-	if (!dest)
-		return (NULL);
-	while (i < len)
-	{
-		dest[i] = s[start + i];
-		i++;
-	}
-	dest[i] = '\0';
-	return (dest);
-}
-
 static size_t	ft_strcpy_len(char *dest, const char *str, size_t i)
 {
 	size_t	j;
@@ -86,7 +44,7 @@ static size_t	ft_strcpy_len(char *dest, const char *str, size_t i)
 	return (i);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin_gnl(char const *s1, char const *s2)
 {
 	size_t	i;
 	char	*dest;
