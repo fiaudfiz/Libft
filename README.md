@@ -40,4 +40,4 @@ To compile your own code with this library, use the following flags:
 ```bash
 cc my_project.c -L. -lft -I./includes
 ```
-    Note : -L. indique où chercher la lib, -lft lie libft.a, et -I./includes permet de trouver le header sans taper le chemin complet.
+    Note: -L. indicates where to look for the lib, -lft links libft.a, and -I./includes allows you to find the header without typing the full path.
