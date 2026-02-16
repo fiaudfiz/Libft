@@ -1,4 +1,4 @@
-📚 Libft - @42
+Libft - @42
 
 > Un projet initial de l'école 42, transformé en une bibliothèque C polyvalente et évolutive pour mes futurs projets (Pipex, Push_Swap, Fract-ol, etc.).
 
