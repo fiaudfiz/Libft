@@ -37,9 +37,6 @@ cd libft && make
 ### 3. Intégration dans un autre projet
 
 Pour compiler ton propre code avec cette bibliothèque, utilise les flags suivants :
-Bash
-
-# Compilation
 
 ```bash
 cc my_project.c -L. -lft -I./includes
