@@ -24,6 +24,7 @@ ERR_LOG = .errors.log
 
 CC = cc
 CFLAGS =  -O3 -Wall -Wextra -Werror -I includes
+DFLAGS = -fsanitize=address -fsanitize=undefined -g -Wshadow
 
 #Dossiers
 SRCS_DIR = srcs/
@@ -87,6 +88,10 @@ start_timer:
 	@rm -rf $(ERR_LOG)
 	$(eval START_TIME := $(shell date +%s))
 
+debug: header start_timer $(OBJS)
+	@$(AR) $(NAME) $(OBJS)
+	@echo "$(GREEN) Libft debug ready !$(DEF_COLOR)"
+
 $(NAME): $(OBJS)
 		@echo "\n\n$(CYAN) █████       █████ ███████████  ███████████ ███████████"  
 		@sleep 0.1
@@ -146,4 +151,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY : all clean fclean re
+.PHONY : all clean fclean re debug
