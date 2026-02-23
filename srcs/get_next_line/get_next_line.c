@@ -6,7 +6,7 @@
 /*   By: miouali <miouali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 10:17:09 by miouali           #+#    #+#             */
-/*   Updated: 2026/02/02 09:30:29 by miouali          ###   ########.fr       */
+/*   Updated: 2026/02/23 20:30:25 by miouali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,11 +81,11 @@ char	*get_next_line(int fd)
 	char		*line;
 
 	if (fd == -1)
-    {
-        free(stash);
-        stash = NULL;
-        return (NULL);
-    }
+	{
+		free(stash);
+		stash = NULL;
+		return (NULL);
+	}
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	stash = read_to_stash(fd, stash);
