@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: miouali <miouali@student.42.fr>            +#+  +:+       +#+         #
+#    By: fiaudfiz <fiaudfiz@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/12 12:56:33 by miouali           #+#    #+#              #
-#    Updated: 2026/02/16 20:39:20 by miouali          ###   ########.fr        #
+#    Updated: 2026/03/26 17:12:15 by fiaudfiz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,18 @@ ERR_LOG = .errors.log
 
 CC = cc
 CFLAGS =  -O3 -Wall -Wextra -Werror -I includes
-DFLAGS = -fsanitize=address -fsanitize=undefined -g -Wshadow
+
+#Flags commun a tout les modes de debug
+DFLAGS_COMMON = -g -Wshadow -fno-omit-frame-pointer
+
+#ASan + UBSan
+DFLAGS_ASAN = $(DFLAGS_COMMON) \
+			-fsanitize=address,undefined \
+			-fno-sanitize-recover=all
+
+#TSan
+DFLAGS_TSAN = $(DFLAGS_COMMON) \
+				-fsanitize=thread
 
 #Dossiers
 SRCS_DIR = srcs/
@@ -82,34 +93,49 @@ RM = rm -rf
 all: header start_timer $(NAME) end_timer
 
 header:
-	@echo "$(YELLOW) Démarrage de la compilation de la Libft...$(RESET)"
+	@printf "\n$(YELLOW)Démarrage de la compilation de la Libft...$(RESET)\n"
 
 start_timer:
 	@rm -rf $(ERR_LOG)
 	$(eval START_TIME := $(shell date +%s))
 
-debug: header start_timer $(OBJS)
+debug debug_asan debug_tsan: \
+    CFLAGS = -O0 -Wall -Werror -Wextra -I includes
+	
+#debug classique
+debug: DFLAGS = $(DFLAGS_COMMON)
+debug: header start_timer $(OBJS) end_timer
 	@$(AR) $(NAME) $(OBJS)
-	@echo "$(GREEN) Libft debug ready !$(DEF_COLOR)"
+	@printf "$(GREEN) Libft debug ready !$(DEF_COLOR)"
+
+debug_asan: DFLAGS = $(DFLAGS_ASAN)
+debug_asan: header start_timer $(OBJS) end_timer
+	@$(AR) $(NAME) $(OBJS)
+	@printf "$(GREEN) Libft debug [ASan+UBSan] ready !$(DEF_COLOR)"
+
+debug_tsan: DFLAGS = $(DFLAGS_TSAN)
+debug_tsan: header start_timer $(OBJS) end_timer
+	@$(AR) $(NAME) $(OBJS)
+	@printf "$(YELLOW) Libft debug [TSan] ready ! $(DEF_COLOR)"
 
 $(NAME): $(OBJS)
-		@echo "\n\n$(CYAN) █████       █████ ███████████  ███████████ ███████████"  
+		@printf "\n\n$(CYAN) █████       █████ ███████████  ███████████ ███████████\n"  
 		@sleep 0.1
-		@echo '░░███       ░░███ ░░███░░░░░███░░███░░░░░░█░█░░░███░░░█'   
+		@printf "░░███       ░░███ ░░███░░░░░███░░███░░░░░░█░█░░░███░░░█\n"   
 		@sleep 0.1
-		@echo ' ░███        ░███  ░███    ░███ ░███   █ ░ ░   ░███  ░'    
+		@printf " ░███        ░███  ░███    ░███ ░███   █ ░ ░   ░███  ░\n"    
 		@sleep 0.1
-		@echo ' ░███        ░███  ░██████████  ░███████       ░███ '     
+		@printf " ░███        ░███  ░██████████  ░███████       ░███ \n"     
 		@sleep 0.1
-		@echo ' ░███        ░███  ░███░░░░░███ ░███░░░█       ░███ '     
+		@printf " ░███        ░███  ░███░░░░░███ ░███░░░█       ░███ \n"     
 		@sleep 0.1
-		@echo ' ░███      █ ░███  ░███    ░███ ░███  ░        ░███ '     
+		@printf " ░███      █ ░███  ░███    ░███ ░███  ░        ░███ \n"     
 		@sleep 0.1
-		@echo ' ███████████ █████ ███████████  █████          █████'     
+		@printf " ███████████ █████ ███████████  █████          █████\n"     
 		@sleep 0.1
-		@echo "░░░░░░░░░░░ ░░░░░ ░░░░░░░░░░░  ░░░░░          ░░░░░ $(DEF_COLOR)"                                                                
+		@printf "░░░░░░░░░░░ ░░░░░ ░░░░░░░░░░░  ░░░░░          ░░░░░ $(DEF_COLOR)\n"                                                                
 		@$(AR) $(NAME) $(OBJS)
-		@echo "\n\n$(GREEN) Libft is ready to be used !$(DEF_COLOR)"
+		@printf "\n\n$(GREEN) Libft is ready to be used !$(DEF_COLOR)"
 
 
 # Variables pour la barre
@@ -118,8 +144,8 @@ CURRENT_FILE := 0
 
 $(OBJS_DIR)%.o: $(SRCS_DIR)%.c $(HEADER)
 	@mkdir -p $(dir $@)
-	@$(eval CURRENT_FILE=$(shell echo $$(($(CURRENT_FILE) + 1))))
-	@$(eval PERCENT=$(shell echo $$(($(CURRENT_FILE) * 100 / $(TOTAL_FILES)))))
+	@$(eval CURRENT_FILE=$(shell printf $$(($(CURRENT_FILE) + 1))))
+	@$(eval PERCENT=$(shell printf $$(($(CURRENT_FILE) * 100 / $(TOTAL_FILES)))))
 	@printf "\r$(CYAN)🛠️  Compiling Libft... [%-20s] %d%%" \
 		"$(shell printf '#%.0s' $$(seq 1 $$(($(PERCENT) / 5))))" $(PERCENT)
 	@$(CC) $(CFLAGS) -c $< -o $@ 2> .temp_err || \
@@ -128,27 +154,27 @@ $(OBJS_DIR)%.o: $(SRCS_DIR)%.c $(HEADER)
 
 end_timer:
 	@$(eval END_TIME := $(shell date +%s))
-	@$(eval DURATION := $(shell echo $$(($(END_TIME) - $(START_TIME)))))
-	@$(eval ERRORS := $(shell if [ -f $(ERR_LOG) ]; then grep -c "error:" $(ERR_LOG); else echo 0; fi))
-	@echo "\n--------------------------------------------------"
+	@$(eval DURATION := $(shell printf $$(($(END_TIME) - $(START_TIME)))))
+	@$(eval ERRORS := $(shell if [ -f $(ERR_LOG) ]; then grep -c "error:" $(ERR_LOG); else printf 0; fi))
+	@printf "\n%s\n" "--------------------------------------------------"
 	@if [ $(ERRORS) -eq 0 ]; then \
-		echo "$(GREEN)✅ COMPILATION TERMINÉE !$(RESET)"; \
+		printf "$(GREEN)✅ COMPILATION TERMINÉE !$(RESET)\n"; \
 	else \
-		echo "$(RED)❌ COMPILATION TERMINÉE AVEC DES ERREURS$(RESET)"; \
+		printf "$(RED)❌ COMPILATION TERMINÉE AVEC DES ERREURS$(RESET)\n"; \
 	fi
-	@echo "Temps écoulé : $(DURATION) secondes"
-	@echo "  Nombre d'erreurs : $(ERRORS)"
-	@echo "--------------------------------------------------"
+	@printf "Temps écoulé : $(DURATION) secondes\n"
+	@printf "  Nombre d'erreurs : $(ERRORS)\n"
+	@printf "%s\n" "--------------------------------------------------"
 	@rm -f $(ERR_LOG)
 
 clean:
 	$(RM) $(OBJS_DIR)
-	@echo "$(PURPLE) Objects cleaned!$(DEF_COLOR)"
+	@printf "$(PURPLE) Objects cleaned!$(DEF_COLOR)\n"
 
 fclean: clean
 		$(RM) $(NAME)
-		@echo "$(PURPLE) $(NAME) deleted!$(DEF_COLOR)"
+		@printf "$(PURPLE) $(NAME) deleted!$(DEF_COLOR)\n"
 
 re: fclean all
 
-.PHONY : all clean fclean re debug
+.PHONY: all clean fclean re debug debug_asan debug_tsan
