@@ -3,137 +3,78 @@
 /*                                                        :::      ::::::::   */
 /*   gnl.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gd-hallu <gd-hallu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fiaudfiz <fiaudfiz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/08 15:33:19 by gd-hallu          #+#    #+#             */
-/*   Updated: 2026/07/01 02:17:34 by gd-hallu         ###   ########.fr       */
+/*   Created: 2026/07/25 00:15:46 by fiaudfiz          #+#    #+#             */
+/*   Updated: 2026/07/25 00:15:48 by fiaudfiz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "gnl.h"
 
-size_t  next_segment(t_node **lst)
+static int	fill_buffer(int fd, char **buf)
 {
-        size_t  count;
-        t_node  *curr;
-        size_t  i;
+	char	read_buf[BUFFER_SIZE + 1];
+	ssize_t	bytes_read;
 
-        curr = *lst;
-        i = 0;
-        count = 0;
-        while (curr)
-        {
-                while (curr->str[i])
-                {
-                        count++;
-                        if (curr->str[i++] == LC)
-                                return (count);
-                }
-                i = 0;
-                curr = curr->next;
-        }
-        return (count);
+	bytes_read = 1;
+	while (!gnl_strchr(*buf, '\n') && bytes_read > 0)
+	{
+		bytes_read = read(fd, read_buf, BUFFER_SIZE);
+		if (bytes_read == -1)
+		{
+			free(*buf);
+			*buf = NULL;
+			return (-1);
+		}
+		if (bytes_read == 0)
+			break ;
+		read_buf[bytes_read] = '\0';
+		*buf = gnl_strjoin_free(*buf, read_buf);
+		if (!*buf)
+			return (-1);
+	}
+	return (0);
 }
 
-size_t  ft_strcpy_lc_count(char *dst, char *src, size_t n)
+static char	*gnl_reset_all(void)
 {
-        size_t  i;
-        size_t  counter;
+	char	**buf;
+	int		i;
 
-        i = 0;
-        counter = 0;
-        if (dst == NULL && n == 0)
-        {
-                while (src[i])
-                        if (src[i++] == LC)
-                                counter++;
-                return (counter);
-        }
-        while (src[i] && i < n)
-        {
-                dst[i] = src[i];
-                i++;
-        }
-        dst[i] = '\0';
-        return (0);
+	buf = gnl_bufs();
+	i = 0;
+	while (i < GNL_MAX_FD)
+	{
+		free(buf[i]);
+		buf[i] = NULL;
+		i++;
+	}
+	return (NULL);
 }
 
-char    *get_next_segment(t_node **lst, char *src)
+char	*get_next_line(int fd)
 {
-        t_node  *curr;
-        size_t  i;
-        size_t  j;
+	char	**buf;
+	char	*line;
+	char	*tmp;
 
-        j = 0;
-        while (*lst)
-        {
-                i = 0;
-                curr = *lst;
-                while (curr->str[i])
-                {
-                        src[j++] = curr->str[i];
-                        if (curr->str[i++] == LC)
-                        {
-                                src[j] = '\0';
-                                clear_node(curr, lst);
-                                return (src);
-                        }
-                }
-                clear_node(curr, lst);
-        }
-        src[j] = '\0';
-        return (src);
-}
-
-size_t  len_str(t_node **lst, int fd)
-{
-        char    *buff;
-        ssize_t bytes_read;
-
-        buff = malloc(BUFFER_SIZE + 1);
-        if (!buff)
-                return (0);
-        bytes_read = read(fd, buff, BUFFER_SIZE);
-        while (bytes_read > 0)
-        {
-                buff[bytes_read] = '\0';
-                if (add_back(buff, lst, bytes_read) == -1)
-                {
-                        free(buff);
-                        clear_list(lst);
-                        return (0);
-                }
-                if (ft_strcpy_lc_count(NULL, buff, 0) > 0)
-                {
-                        free(buff);
-                        return (next_segment(lst));
-                }
-                bytes_read = read(fd, buff, BUFFER_SIZE);
-        }
-        free(buff);
-        return (next_segment(lst));
-}
-
-char    *get_next_line(int fd)
-{
-        static t_node   *tab[1024];
-        char                    *str;
-        size_t                  len;
-
-        if (fd < 0 || fd > 1024)
-                return (NULL);
-        len = len_str(&tab[fd], fd);
-        if (len == 0)
-        {
-                clear_list(&tab[fd]);
-                return (NULL);
-        }
-        str = malloc(len + 1);
-        if (!str)
-        {
-                clear_list(&tab[fd]);
-                return (NULL);
-        }
-        str[len] = '\0';
-        return (get_next_segment(&tab[fd], str));
+	if (fd == -1)
+		return (gnl_reset_all());
+	if (fd < 0 || fd >= GNL_MAX_FD || BUFFER_SIZE <= 0)
+		return (NULL);
+	buf = gnl_bufs();
+	if (fill_buffer(fd, &buf[fd]) == -1)
+		return (NULL);
+	if (!buf[fd] || !buf[fd][0])
+	{
+		free(buf[fd]);
+		buf[fd] = NULL;
+		return (NULL);
+	}
+	line = gnl_extract_line(buf[fd]);
+	tmp = buf[fd];
+	buf[fd] = gnl_extract_rest(buf[fd]);
+	free(tmp);
+	return (line);
 }

@@ -3,109 +3,112 @@
 /*                                                        :::      ::::::::   */
 /*   gnl_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gd-hallu <gd-hallu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fiaudfiz <fiaudfiz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/08 15:33:32 by gd-hallu          #+#    #+#             */
-/*   Updated: 2026/07/01 02:16:48 by gd-hallu         ###   ########.fr       */
+/*   Created: 2026/07/25 00:15:54 by fiaudfiz          #+#    #+#             */
+/*   Updated: 2026/07/25 00:15:55 by fiaudfiz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "gnl.h"
 
-void    clear_list(t_node **lst)
+size_t	gnl_strlen(const char *s)
 {
-        t_node  *current;
-        t_node  *next;
+	size_t	i;
 
-        current = *lst;
-        if (current == NULL)
-                return ;
-        while (current != NULL)
-        {
-                next = current->next;
-                free(current->str);
-                free(current);
-                current = next;
-        }
-        *lst = NULL;
+	i = 0;
+	while (s && s[i])
+		i++;
+	return (i);
 }
 
-t_node  *create_node(char *str, size_t bytes_read)
+char	*gnl_strchr(const char *s, int c)
 {
-        t_node  *new;
-
-        new = malloc(sizeof(t_node));
-        if (!new)
-                return (NULL);
-        new->str = malloc(bytes_read + 1);
-        if (!new->str)
-        {
-                free(new);
-                return (NULL);
-        }
-        ft_strcpy_lc_count(new->str, str, bytes_read);
-        new->str[bytes_read] = '\0';
-        new->next = NULL;
-        return (new);
+	while (s && *s)
+	{
+		if (*s == (char)c)
+			return ((char *)s);
+		s++;
+	}
+	if (s && (char)c == '\0')
+		return ((char *)s);
+	return (NULL);
 }
 
-int     add_back(char *str, t_node **lst, size_t bytes_read)
+char	*gnl_strjoin_free(char *s1, char *s2)
 {
-        t_node  *new;
-        t_node  *curr;
+	char	*res;
+	size_t	len1;
+	size_t	len2;
+	size_t	i;
+	size_t	j;
 
-        new = create_node(str, bytes_read);
-        if (!new)
-                return (-1);
-        if (*lst == NULL)
-        {
-                *lst = new;
-                return (1);
-        }
-        curr = *lst;
-        while (curr->next)
-                curr = curr->next;
-        curr->next = new;
-        return (1);
+	len1 = gnl_strlen(s1);
+	len2 = gnl_strlen(s2);
+	res = malloc(len1 + len2 + 1);
+	if (!res)
+		return (NULL);
+	i = 0;
+	while (i < len1)
+	{
+		res[i] = s1[i];
+		i++;
+	}
+	j = 0;
+	while (j < len2)
+		res[i++] = s2[j++];
+	res[i] = '\0';
+	free(s1);
+	return (res);
 }
 
-static void     add_front(t_node *node, t_node **lst, size_t *i)
+char	*gnl_extract_line(char *buf)
 {
-        size_t  j;
-        t_node  *new;
+	char	*nl;
+	char	*line;
+	size_t	len;
+	size_t	i;
 
-        j = 0;
-        while (node->str[*i + j])
-                j++;
-        new = create_node(node->str + *i, j);
-        if (!new)
-        {
-                free(node->str);
-                free(node);
-                clear_list(lst);
-                return ;
-        }
-        *lst = node->next;
-        free(node->str);
-        new->next = *lst;
-        *lst = new;
-        free(node);
+	if (!buf || !buf[0])
+		return (NULL);
+	nl = gnl_strchr(buf, '\n');
+	if (nl)
+		len = (size_t)(nl - buf) + 1;
+	else
+		len = gnl_strlen(buf);
+	line = malloc(len + 1);
+	if (!line)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		line[i] = buf[i];
+		i++;
+	}
+	line[i] = '\0';
+	return (line);
 }
 
-void    clear_node(t_node *node, t_node **lst)
+char	*gnl_extract_rest(char *buf)
 {
-        size_t  i;
+	char	*nl;
+	char	*rest;
+	size_t	i;
 
-        i = 0;
-        while (node->str[i] && node->str[i] != LC)
-                i++;
-        if (!node->str[i])
-        {
-                *lst = node->next;
-                free(node->str);
-                free(node);
-                return ;
-        }
-        i++;
-        add_front(node, lst, &i);
+	if (!buf)
+		return (NULL);
+	nl = gnl_strchr(buf, '\n');
+	if (!nl)
+		return (NULL);
+	rest = malloc(gnl_strlen(nl + 1) + 1);
+	if (!rest)
+		return (NULL);
+	i = 0;
+	while (nl[i + 1])
+	{
+		rest[i] = nl[i + 1];
+		i++;
+	}
+	rest[i] = '\0';
+	return (rest);
 }
